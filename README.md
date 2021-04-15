@@ -6,10 +6,13 @@ npm install -g ts-node
 npm i @prisma/client @nexus/schema nexus-plugin-prisma @prisma/cli
 
 # Init client
+```
 prisma init
 prisma introspect
 prisma generate
 prisma studio
-
+```
 # Seeding
+```
 prisma db seed --preview-feature
+```

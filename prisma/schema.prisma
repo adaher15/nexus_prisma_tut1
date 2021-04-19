@@ -6,3 +6,138 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Address {
+  id          Int           @id @default(autoincrement())
+  unit        Int?
+  number      Int
+  street      String        @db.VarChar(112)
+  city        String        @db.VarChar(112)
+  province    String        @db.VarChar(112)
+  country     String?       @default("canada") @db.VarChar(50)
+  postalCode  String?       @db.VarChar(10)
+  Farms       Farms[]
+  UserProfile UserProfile[]
+}
+
+model BasketItems {
+  id                 Int                @id @default(autoincrement())
+  offeredBasketId    Int
+  ProduceId          Int
+  quantity           String             @db.VarChar(1024)
+  creationDate       DateTime?          @default(now()) @db.Timestamp(6)
+  FarmProduce        FarmProduce        @relation(fields: [ProduceId], references: [id])
+  FarmOfferedBaskets FarmOfferedBaskets @relation(fields: [offeredBasketId], references: [id])
+}
+
+model FarmOfferedBaskets {
+  id              Int           @id @default(autoincrement())
+  farmeId         Int
+  offeredBasketId Int
+  description     String        @db.VarChar(1024)
+  creationDate    DateTime?     @default(now()) @db.Timestamp(6)
+  startOfferDate  DateTime?     @db.Timestamp(6)
+  endOfferDate    DateTime?     @db.Timestamp(6)
+  Farms           Farms         @relation(fields: [farmeId], references: [id])
+  BasketItems     BasketItems[]
+}
+
+model FarmProduce {
+  id           Int           @id @default(autoincrement())
+  farmeId      Int
+  produceId    Int
+  creationDate DateTime?     @default(now()) @db.Timestamp(6)
+  Farms        Farms         @relation(fields: [farmeId], references: [id])
+  Produce      Produce       @relation(fields: [produceId], references: [id])
+  BasketItems  BasketItems[]
+}
+
+model FarmReferenceBaskets {
+  id           Int       @id @default(autoincrement())
+  farmeId      Int
+  name         String    @db.VarChar(1024)
+  description  String    @db.VarChar(1024)
+  size         String    @db.VarChar(1024)
+  weight       String    @db.VarChar(1024)
+  creationDate DateTime? @default(now()) @db.Timestamp(6)
+  Farms        Farms     @relation(fields: [farmeId], references: [id])
+}
+
+model Farms {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @db.VarChar(1024)
+  address              Int
+  creationDate         DateTime?              @default(now()) @db.Timestamp(6)
+  Address              Address                @relation(fields: [address], references: [id])
+  FarmOfferedBaskets   FarmOfferedBaskets[]
+  FarmProduce          FarmProduce[]
+  FarmReferenceBaskets FarmReferenceBaskets[]
+}
+
+model Produce {
+  id                Int               @id @default(autoincrement())
+  description       String            @db.VarChar(1024)
+  creationDate      DateTime?         @default(now()) @db.Timestamp(6)
+  category          Int
+  ProduceCategories ProduceCategories @relation(fields: [category], references: [id])
+  FarmProduce       FarmProduce[]
+}
+
+model ProduceCategories {
+  id           Int       @id
+  name         String    @unique @db.VarChar(50)
+  description  String?   @db.VarChar(1024)
+  canBeShipped Boolean?  @default(true)
+  creationDate DateTime? @default(now()) @db.Timestamp(6)
+  Produce      Produce[]
+}
+
+model Region {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(124)
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  role        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(124)
+}
+
+model User {
+  id               Int             @id @default(autoincrement())
+  email            String          @unique @db.VarChar(254)
+  password         String          @db.VarChar(254)
+  passwordExpired  Boolean?        @default(false)
+  status           Int             @default(0)
+  tempPassword     String?         @db.VarChar(254)
+  tempPasswordDate DateTime?       @db.Timestamp(6)
+  UserStatus       UserStatus      @relation(fields: [status], references: [id])
+  UserActivation   UserActivation?
+  UserProfile      UserProfile?
+}
+
+model UserActivation {
+  userId         Int       @id
+  activationcode String    @unique @db.VarChar(50)
+  creationDate   DateTime? @default(now()) @db.Timestamp(6)
+  User           User      @relation(fields: [userId], references: [id])
+}
+
+model UserProfile {
+  userId    Int      @id
+  firstname String   @db.VarChar(50)
+  lastname  String   @db.VarChar(50)
+  addressId Int?
+  telephone String?  @db.VarChar(15)
+  cellphone String?  @db.VarChar(15)
+  Address   Address? @relation(fields: [addressId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model UserStatus {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(124)
+  User        User[]
+}

@@ -16,3 +16,16 @@ prisma studio
 ```
 prisma db seed --preview-feature
 ```
+
+
+# Add Nexus
+```
+npm add nexus graphql apollo-server
+npm install --save  @nexus/schema
+npm add --save-dev typescript ts-node-dev
+```
+
+# CRUD documentation 
+https://nexusjs.org/docs/plugins/prisma/api
+
+We could implement simple endpoint or use available CRUD from nexus-prisma

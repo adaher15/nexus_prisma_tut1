@@ -112,7 +112,9 @@ model User {
   status           Int             @default(0)
   tempPassword     String?         @db.VarChar(254)
   tempPasswordDate DateTime?       @db.Timestamp(6)
+  userType         Int             @default(2)
   UserStatus       UserStatus      @relation(fields: [status], references: [id])
+  UserType         UserType        @relation(fields: [status], references: [id])
   UserActivation   UserActivation?
   UserProfile      UserProfile?
 }
@@ -137,6 +139,13 @@ model UserProfile {
 
 model UserStatus {
   id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String? @db.VarChar(124)
+  User        User[]
+}
+
+model UserType {
+  id          Int     @id @default(dbgenerated("nextval('\"UserType_id_seq\"'::regclass)"))
   name        String  @unique @db.VarChar(50)
   description String? @db.VarChar(124)
   User        User[]

@@ -27,7 +27,7 @@ CREATE TABLE farmers."Address" (
   );
 
 
-  CREATE TABLE farmers."UserStatus" (
+CREATE TABLE farmers."UserStatus" (
   id serial PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   description VARCHAR(124),
@@ -40,7 +40,15 @@ INSERT INTO farmers."UserStatus"(id, name) VALUES (4, 'suspended');
 INSERT INTO farmers."UserStatus"(id, name) VALUES (5, 'deleted');
 INSERT INTO farmers."UserStatus"(id, name) VALUES (6, 'invited');
 
-
+CREATE TABLE farmers."UserType" (
+  id serial PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  description VARCHAR(124),
+  UNIQUE (name)
+);
+INSERT INTO farmers."UserType"(id, name) VALUES (1, 'admin');
+INSERT INTO farmers."UserType"(id, name) VALUES (2, 'farmer');
+INSERT INTO farmers."UserType"(id, name) VALUES (3, 'buyer');
 
 CREATE TABLE farmers."User" (
   id serial PRIMARY KEY,
@@ -51,7 +59,9 @@ CREATE TABLE farmers."User" (
   "status" INTEGER NOT NULL DEFAULT 0,
   "tempPassword" VARCHAR(254),
   "tempPasswordDate" TIMESTAMP,
-  CONSTRAINT fk_user_status FOREIGN KEY (status) REFERENCES farmers."UserStatus" (id)
+  "userType" INTEGER NOT NULL,
+  CONSTRAINT fk_user_status FOREIGN KEY (status) REFERENCES farmers."UserStatus" (id),
+  CONSTRAINT fk_user_type FOREIGN KEY (status) REFERENCES farmers."UserType" (id)
   );
 
 CREATE TABLE farmers."UserActivation" (

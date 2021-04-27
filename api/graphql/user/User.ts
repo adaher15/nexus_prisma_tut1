@@ -8,6 +8,7 @@ export const signUpInput = inputObjectType({
         t.nonNull.string("password")
         t.nonNull.string("firstName")
         t.nonNull.string("lastName")
+        t.nonNull.string("type")
     }
 });
 
@@ -16,7 +17,8 @@ export const User = objectType({
     definition(t) {
         t.model.id()
         t.model.email()
-        t.model.status()
+        t.nonNull.string("status")
+        t.nonNull.string("type")
     }
 })
 
